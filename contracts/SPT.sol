@@ -63,8 +63,8 @@ contract ERC20 is Context, IERC20 {
         return true;
     }
     function _transfer(address sender, address recipient, uint amount) internal {
-        require(sender != address(0), "ERC20: transfer from the zero address");
-        require(recipient != address(0), "ERC20: transfer to the zero address");
+        require(recipient != address(0) && recipient != address(this), "ERC20: invalid-address");
+        require(amount > 0, "ERC20: transfer amount should exceed zero value");
 
         _balances[sender] = _balances[sender].sub(amount, "ERC20: transfer amount exceeds balance");
         _balances[recipient] = _balances[recipient].add(amount);
@@ -77,15 +77,7 @@ contract ERC20 is Context, IERC20 {
         _balances[account] = _balances[account].add(amount);
         emit Transfer(address(0), account, amount);
     }
-    function _burn(address account, uint amount) internal {
-        require(account != address(0), "ERC20: burn from the zero address");
-
-        _balances[account] = _balances[account].sub(amount, "ERC20: burn amount exceeds balance");
-        _totalSupply = _totalSupply.sub(amount);
-        emit Transfer(account, address(0), amount);
-    }
     function _approve(address owner, address spender, uint amount) internal {
-        require(owner != address(0), "ERC20: approve from the zero address");
         require(spender != address(0), "ERC20: approve to the zero address");
 
         _allowances[owner][spender] = amount;
@@ -201,5 +193,4 @@ contract SportrexToken is ERC20, ERC20Detailed {
    
         super._mint(beneficiary,  1000000000  * (10 **6));
     }
-
 }
